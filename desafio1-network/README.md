@@ -133,7 +133,6 @@ docker build -t fccpd-desafio1-client ./client
   ```
 ### 3️⃣ Subir o servidor (Flask)
 ```text
-Copiar código
 docker run -d --name server --network fccpd_net -p 5000:5000 fccpd-desafio1-server
   ```
 Testar no navegador:
@@ -146,7 +145,6 @@ curl http://localhost:5000
   ```
 ### 4️⃣ Subir o cliente
 ```text
-Copiar código
 docker run -it --name client --network fccpd_net fccpd-desafio1-client
   ```
 ### Saída esperada
