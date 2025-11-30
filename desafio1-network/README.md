@@ -14,14 +14,7 @@ client → container que chama o servidor periodicamente usando curl
 Ambos devem estar na mesma rede Docker chamada fccpd_net.
 
 ### 🧱 Estrutura de Pastas
-desafio1-network/
-  server/
-    app.py
-    Dockerfile
-  client/
-    entrypoint.sh
-    Dockerfile
-  README.md
+text desafio1-network/ server/ app.py Dockerfile client/ entrypoint.sh Dockerfile README.md
 
 ### 🖥️ Arquitetura do Sistema
             Rede Docker: fccpd_net
