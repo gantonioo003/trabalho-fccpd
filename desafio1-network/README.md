@@ -1,0 +1,179 @@
+# 📦 Desafio 1 – Comunicação entre Containers em Rede (FCCPD)
+
+Este desafio demonstra o funcionamento básico de comunicação entre containers Docker utilizando **redes internas**.  
+O objetivo é entender como dois serviços isolados podem se comunicar **pelo nome do container**, sem depender de IP fixo.
+
+---
+
+## 🎯 Objetivo
+
+Criar **dois containers**:
+
+- **server** → um servidor Flask que responde em `http://server:5000`
+- **client** → um container que fica chamando periodicamente o servidor usando `curl`
+
+Ambos devem estar conectados à **mesma rede Docker**, chamada `fccpd_net`.
+
+O client deve ser capaz de acessar o servidor usando **resolução de nome via DNS interno** do Docker.
+
+---
+
+## 🧱 Estrutura de Pastas
+
+```text
+desafio1-network/
+  server/
+    app.py
+    Dockerfile
+  client/
+    entrypoint.sh
+    Dockerfile
+  README.md
+  ```
+
+
+
+## 🖥️ Arquitetura do Sistema
+
+markdown
+Copiar código
+         Rede Docker: fccpd_net
+┌──────────────────────────────────────────────┐
+│ │
+│ +----------------------+ │
+│ | server | │
+│ | Flask (porta 5000) | │
+│ +----------------------+ │
+│ ▲ │
+│ │ HTTP │
+│ ▼ │
+│ +----------------------+ │
+│ | client | │
+│ | loop com curl | │
+│ +----------------------+ │
+│ │
+└──────────────────────────────────────────────┘
+
+yaml
+Copiar código
+
+- A rede interna criada: **fccpd_net**
+- O client acessa: `http://server:5000`
+
+---
+
+# 🐍 Código do Servidor (Flask)
+
+Arquivo: `server/app.py`
+
+```python
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route("/")
+def index():
+    return "Hello from server (desafio1-network)!", 200
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
+🐳 Dockerfile do Servidor
+Arquivo: server/Dockerfile
+
+Dockerfile
+Copiar código
+FROM python:3.11-slim
+
+WORKDIR /app
+
+RUN pip install flask
+
+COPY app.py .
+
+EXPOSE 5000
+
+CMD ["python", "app.py"]
+📄 Script do Cliente
+Arquivo: client/entrypoint.sh
+
+bash
+Copiar código
+#!/bin/sh
+
+echo "Iniciando client... Vou ficar chamando http://server:5000 a cada 3 segundos."
+while true; do
+  echo "-----"
+  date
+  curl -s http://server:5000 || echo "Erro ao conectar no server"
+  sleep 3
+done
+🐳 Dockerfile do Cliente
+Arquivo: client/Dockerfile
+
+Dockerfile
+Copiar código
+FROM alpine:3.19
+
+RUN apk add --no-cache curl
+
+WORKDIR /app
+
+COPY entrypoint.sh .
+
+RUN chmod +x entrypoint.sh
+
+CMD ["./entrypoint.sh"]
+🚀 Como Executar o Projeto
+1️⃣ Criar a rede Docker
+bash
+Copiar código
+docker network create fccpd_net
+2️⃣ Construir as imagens
+bash
+Copiar código
+docker build -t fccpd-desafio1-server ./server
+docker build -t fccpd-desafio1-client ./client
+3️⃣ Subir o servidor (Flask)
+bash
+Copiar código
+docker run -d --name server --network fccpd_net -p 5000:5000 fccpd-desafio1-server
+Testar:
+
+Navegador: http://localhost:5000
+
+Ou PowerShell:
+
+powershell
+Copiar código
+curl http://localhost:5000
+4️⃣ Subir o cliente
+bash
+Copiar código
+docker run -it --name client --network fccpd_net fccpd-desafio1-client
+Saída esperada:
+
+pgsql
+Copiar código
+-----
+Sat Nov 30 05:12:00 UTC 2025
+Hello from server (desafio1-network)!
+-----
+Sat Nov 30 05:12:03 UTC 2025
+Hello from server (desafio1-network)!
+🧠 Conceitos Importantes (FCCPD)
+✔ Containers isolam processos
+✔ Docker usa DNS interno para resolver nomes de containers
+✔ Cada container tem seu próprio filesystem, PID namespace e rede virtual
+✔ Comunicação é feita por TCP/IP (HTTP)
+✔ O cliente usa curl para enviar requisições repetidas
+✔ A rede customizada fccpd_net simula uma rede distribuída simples
+✔ Requisições usam hostname → server
+
+🧹 Comandos Úteis (Limpeza)
+bash
+Copiar código
+docker rm -f client server
+docker network rm fccpd_net
+✅ Conclusão
+Este desafio mostrou como containers podem atuar como processos distribuídos, cada um com seu próprio ambiente, comunicando-se via rede virtual.
+Essa base será usada nos próximos desafios (Volumes, Compose, Microsserviços e API Gateway), construindo progressivamente um sistema distribuído completo.
