@@ -109,5 +109,6 @@ Cada README específico explica os comandos necessários para subir e testar cad
 
 ### ✍ Autor
 **•	Nome: Gabriel Antônio**
+
 **•	E-mail: gantonioo102003@gmail.com**
 
