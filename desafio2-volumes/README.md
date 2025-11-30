@@ -139,9 +139,13 @@ Se os dados ainda estiverem lá, a persistência foi comprovada.
 ---
 
 ### 🧠 Conceitos Importantes (FCCPD)
+
 ✔ Containers são efêmeros (podem ser descartados).
+
 ✔ Volumes Docker armazenam dados de forma persistente.
+
 ✔ O ciclo de vida do container é diferente do ciclo de vida dos dados.
+
 ✔ Persistência é fundamental em sistemas distribuídos que armazenam estado (bancos de dados).
 
 ---

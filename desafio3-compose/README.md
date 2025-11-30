@@ -129,10 +129,15 @@ Acessar no navegador:
 ### 🧠 Conceitos Importantes (FCCPD)
 
 ✔ Orquestração de múltiplos serviços com Docker Compose
+
 ✔ Rede interna automática entre containers
+
 ✔ Comunicação entre serviços via nome (db, cache, web)
+
 ✔ Uso de depends_on para expressar dependências
+
 ✔ Configuração de serviços com variáveis de ambiente
+
 ✔ Arquitetura típica de microsserviços (web + db + cache)
 
 ---
